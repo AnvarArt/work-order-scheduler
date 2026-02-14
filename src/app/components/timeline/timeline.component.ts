@@ -22,19 +22,20 @@ const LABEL_GAP_PX = 32; // space between calendar and table for current period 
 const LEFT_PANEL_WIDTH_PX = 220;
 const TIMELINE_BODY_WIDTH = 3600; // total px width of the scrollable area
 
-/** Buffer: ±2 weeks day, ±2 months week, ±6 months month */
+/** Range varies by zoom: day (4 weeks), week (3 months), month (6 months) for readability */
 function getRangeForZoom(zoom: TimelineZoom): { start: Date; end: Date } {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   const start = new Date(today);
   const end = new Date(today);
+  
   switch (zoom) {
     case 'day':
       start.setDate(start.getDate() - 14);
       end.setDate(end.getDate() + 14);
       break;
     case 'week':
-      start.setMonth(start.getMonth() - 2);
+      start.setMonth(start.getMonth() - 1);
       end.setMonth(end.getMonth() + 2);
       break;
     case 'month':
@@ -42,6 +43,7 @@ function getRangeForZoom(zoom: TimelineZoom): { start: Date; end: Date } {
       end.setMonth(end.getMonth() + 6);
       break;
   }
+  
   return { start, end };
 }
 
@@ -226,7 +228,13 @@ export class TimelineComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ordersForCenter(workCenterId: string): WorkOrderDocument[] {
-    return this.workOrders.filter((o) => o.data.workCenterId === workCenterId);
+    const rangeEndTime = this.range.end.getTime();
+    return this.workOrders.filter((o) => {
+      if (o.data.workCenterId !== workCenterId) return false;
+      // Hide orders that start after the calendar end date
+      const startTime = new Date(o.data.startDate).getTime();
+      return startTime <= rangeEndTime;
+    });
   }
 
   /** True if this work center row contains the order whose three-dot menu is open. */
