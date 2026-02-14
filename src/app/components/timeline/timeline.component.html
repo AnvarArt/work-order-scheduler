@@ -1,0 +1,135 @@
+<div class="timeline-wrap">
+  <header class="timeline-header">
+    <div class="timeline-header-left">
+      <div class="logo">NAOLOGIC</div>
+      <h1 class="timeline-title">Work Orders</h1>
+      <div class="timescale">
+        <label for="zoom-select">Timescale:</label>
+        <select
+          id="zoom-select"
+          class="timescale-select"
+          [ngModel]="zoom"
+          (ngModelChange)="setZoom($event)"
+        >
+          @for (opt of zoomOptions; track opt.value) {
+            <option [value]="opt.value">{{ opt.label }}</option>
+          }
+        </select>
+      </div>
+    </div>
+  </header>
+
+  <div class="timeline-container">
+    <div class="timeline-left" style="width: {{ LEFT_PANEL_WIDTH }}px">
+      <div class="timeline-left-header" style="height: {{ HEADER_HEIGHT }}px">
+        <span class="work-center-label">Work Center</span>
+      </div>
+      @for (wc of workCenters; track wc.docId) {
+        <div
+          class="timeline-left-row"
+          [class.hover]="hoveredRowId === wc.docId"
+          (mouseenter)="setHoverRow(wc.docId)"
+          (mouseleave)="setHoverRow(null)"
+          style="height: {{ ROW_HEIGHT }}px"
+        >
+          {{ wc.data.name }}
+        </div>
+      }
+    </div>
+    <div class="timeline-right">
+      <div
+        #timelineBody
+        class="timeline-body"
+        [style.height.px]="timelineBodyHeightPx"
+        style="min-width: 100%"
+      >
+        <div class="timeline-grid-header" [style.height.px]="HEADER_HEIGHT">
+          @for (h of headerLabels; track h.label + h.leftPx) {
+            <div
+              class="header-cell"
+              [style.left.px]="h.leftPx"
+              [style.width.px]="h.widthPx"
+            >
+              {{ h.label }}
+            </div>
+          }
+        </div>
+        @if (todayPositionPx !== null) {
+          <div
+            class="current-period-label"
+            [style.left.px]="todayPositionPx"
+            [attr.title]="currentPeriodLabel"
+          >{{ currentPeriodLabel }}</div>
+          <div
+            class="today-line"
+            [style.left.px]="todayPositionPx"
+            [style.top.px]="HEADER_HEIGHT"
+            [style.height.px]="workCenters.length * ROW_HEIGHT"
+            [attr.title]="currentPeriodLabel"
+          ></div>
+        }
+        @for (wc of workCenters; track wc.docId) {
+          <div
+            class="timeline-row"
+            [class.hover]="hoveredRowId === wc.docId"
+            [class.menu-open]="rowHasMenuOpen(wc.docId)"
+            (mouseenter)="setHoverRow(wc.docId)"
+            (mouseleave)="setHoverRow(null)"
+            (click)="onTimelineClick(wc.docId, $event)"
+            [style.height.px]="ROW_HEIGHT"
+            [style.top.px]="HEADER_HEIGHT + $index * ROW_HEIGHT"
+          >
+            @if (hoveredRowId === wc.docId) {
+              <div class="click-to-add-hint">Click to add dates</div>
+            }
+            <div class="row-bars">
+              @for (order of ordersForCenter(wc.docId); track order.docId) {
+                <div
+                  class="work-order-bar"
+                  [class]="statusClass(order.data.status)"
+                  [class.menu-open]="openMenuDocId === order.docId"
+                  [style.left.%]="barPosition(order.data.startDate, order.data.endDate).leftPct"
+                  [style.width.%]="barPosition(order.data.startDate, order.data.endDate).widthPct"
+                  (click)="$event.stopPropagation()"
+                >
+                  <span class="bar-label">{{ order.data.name }}</span>
+                  <span class="bar-status">{{ statusLabel(order.data.status) }}</span>
+                  <div class="bar-actions">
+                    <button
+                      type="button"
+                      class="bar-menu-btn"
+                      (click)="toggleMenu(order.docId); $event.stopPropagation()"
+                      aria-label="Actions"
+                    >
+                      &#8942;
+                    </button>
+                    @if (openMenuDocId === order.docId) {
+                      <div class="bar-dropdown" (click)="$event.stopPropagation()">
+                        <button type="button" (click)="openEdit(order)">Edit</button>
+                        <button type="button" (click)="deleteOrder(order)">Delete</button>
+                      </div>
+                    }
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+</div>
+
+@if (panelOpen) {
+  <app-work-order-panel
+    [mode]="panelMode"
+    [workCenters]="workCenters"
+    [initialWorkCenterId]="createPrefill?.workCenterId ?? null"
+    [createPrefill]="createPrefill"
+    [overlapError]="panelOverlapError"
+    [prefill]="editOrder"
+    (close)="closePanel()"
+    (create)="onCreate($event)"
+    (save)="onSave($event)"
+  />
+}

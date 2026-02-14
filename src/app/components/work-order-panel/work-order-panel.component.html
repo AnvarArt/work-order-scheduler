@@ -1,0 +1,75 @@
+<div class="panel-backdrop" (click)="onBackdropClick()" role="button" tabindex="0" (keydown.escape)="onCancel()"></div>
+<div class="panel" role="dialog" aria-label="Work Order Details">
+  <header class="panel-header">
+    <div class="panel-header-content">
+      <h2 class="panel-title">Work Order Details</h2>
+      <p class="panel-subtitle">Specify the dates, name and status for this order.</p>
+    </div>
+    <div class="panel-header-actions">
+      <button type="button" class="btn btn-outline-secondary" (click)="onCancel()">Cancel</button>
+      <button type="button" class="btn btn-primary" (click)="onSubmit()">{{ submitLabel }}</button>
+    </div>
+  </header>
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="panel-form">
+    <div class="form-group">
+      <label for="wo-name">Work Order Name</label>
+      <input id="wo-name" type="text" formControlName="name" class="form-control" placeholder="Enter name" />
+      @if (form.get('name')?.invalid && form.get('name')?.touched) {
+        <span class="error">Work Order Name is required.</span>
+      }
+    </div>
+    <div class="form-group">
+      <label for="wo-status">Status</label>
+      <select id="wo-status" class="form-control" formControlName="status">
+        @for (opt of statusOptions; track opt.value) {
+          <option [value]="opt.value">{{ opt.label }}</option>
+        }
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="wo-work-center">Work Center</label>
+      <select id="wo-work-center" class="form-control" formControlName="workCenterId">
+        <option value="" disabled>Select work center</option>
+        @for (wc of workCenters; track wc.docId) {
+          <option [value]="wc.docId">{{ wc.data.name }}</option>
+        }
+      </select>
+      @if (form.get('workCenterId')?.invalid && form.get('workCenterId')?.touched) {
+        <span class="error">Work Center is required.</span>
+      }
+    </div>
+    <div class="form-group">
+      <label>Start Date</label>
+      <input
+        class="form-control"
+        formControlName="startDate"
+        ngbDatepicker
+        #startDp="ngbDatepicker"
+        (dateSelect)="onStartDateSelect($event)"
+        placeholder="yyyy-mm-dd"
+      />
+      @if (form.get('startDate')?.invalid && form.get('startDate')?.touched) {
+        <span class="error">Start Date is required.</span>
+      }
+    </div>
+    <div class="form-group">
+      <label>End Date</label>
+      <input
+        class="form-control"
+        formControlName="endDate"
+        ngbDatepicker
+        #endDp="ngbDatepicker"
+        placeholder="yyyy-mm-dd"
+      />
+      @if (form.get('endDate')?.invalid && form.get('endDate')?.touched) {
+        <span class="error">End Date is required.</span>
+      }
+      @if (endDateBeforeStartError) {
+        <span class="error">End date must be after start date.</span>
+      }
+    </div>
+    @if (overlapError) {
+      <div class="overlap-error">{{ overlapError }}</div>
+    }
+  </form>
+</div>
