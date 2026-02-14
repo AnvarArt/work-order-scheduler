@@ -14,12 +14,6 @@ ng serve
 
 Open [http://localhost:4200](http://localhost:4200). No extra setup (e.g. backend or env vars) is required.
 
-## Approach
-
-- **Timeline**: A fixed left column lists work centers; a horizontally scrollable grid shows time. The visible range is centered on today with a buffer (e.g. ±2 weeks in Day view). Header labels and bar positions are derived from the current zoom (Day/Week/Month) and date range.
-- **Work order bars**: Each order is a bar with name, status badge, and a three-dot menu (Edit/Delete). Bar position and width are computed as percentages of the timeline range so they stay correct when the window is resized.
-- **Create/Edit panel**: A single slide-out panel is used for both create and edit. Create is opened by clicking on empty timeline space (start/end dates and work center are prefilled from the click). Edit is opened from the bar menu. Reactive Forms with required fields and end-date-after-start-date checks are used; overlap is validated on submit and an error is shown without saving.
-- **Data**: Work centers and work orders follow the document structure from the spec. Sample data is provided in `src/app/data/sample-data.ts`. Work orders are persisted in **localStorage** (bonus) so they survive refresh.
 
 ## Libraries Used
 
