@@ -134,6 +134,13 @@
   z-index: 1;
 }
 
+.label-gap-spacer {
+  position: relative;
+  background: transparent;
+  border-bottom: 1px solid var(--grid-border);
+  z-index: 1;
+}
+
 .header-cell {
   position: absolute;
   top: 0;
@@ -150,20 +157,20 @@
   box-sizing: border-box;
 }
 
-/* Current period label in header (light purple badge per screenshots) */
+/* Current period label in gap between header and rows */
 .current-period-label {
   position: absolute;
-  top: 100%;
-  transform: translateX(-50%) translateY(4px);
+  top: 50%;
+  transform: translateX(-50%) translateY(-50%);
   padding: 4px 10px;
-  font-size: 0.625rem;
+  font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: 0.02em;
   color: #5e35b1;
   background: #ede7f6;
   border-radius: 6px;
   pointer-events: none;
-  z-index: 4;
+  z-index: 2;
   white-space: nowrap;
 }
 

@@ -18,6 +18,7 @@ import { WorkOrderPanelComponent, PanelMode } from '../work-order-panel/work-ord
 
 const ROW_HEIGHT_PX = 48;
 const HEADER_HEIGHT_PX = 44;
+const LABEL_GAP_PX = 32; // space between calendar and table for current period label
 const LEFT_PANEL_WIDTH_PX = 220;
 const TIMELINE_BODY_WIDTH = 3600; // total px width of the scrollable area
 
@@ -64,6 +65,7 @@ export class TimelineComponent implements OnInit, AfterViewInit, OnDestroy {
 
   readonly ROW_HEIGHT = ROW_HEIGHT_PX;
   readonly HEADER_HEIGHT = HEADER_HEIGHT_PX;
+  readonly LABEL_GAP = LABEL_GAP_PX;
   readonly LEFT_PANEL_WIDTH = LEFT_PANEL_WIDTH_PX;
 
   workCenters: WorkCenterDocument[] = [];
@@ -334,7 +336,7 @@ export class TimelineComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   get timelineBodyHeightPx(): number {
-    return this.HEADER_HEIGHT + this.workCenters.length * this.ROW_HEIGHT;
+    return this.HEADER_HEIGHT + this.LABEL_GAP + this.workCenters.length * this.ROW_HEIGHT;
   }
 
   /** Label for current period indicator in header (matches screenshots). */

@@ -54,16 +54,20 @@
             </div>
           }
         </div>
+        <div class="label-gap-spacer" [style.height.px]="LABEL_GAP">
+          @if (todayPositionPx !== null) {
+            <div
+              class="current-period-label"
+              [style.left.px]="todayPositionPx"
+              [attr.title]="currentPeriodLabel"
+            >{{ currentPeriodLabel }}</div>
+          }
+        </div>
         @if (todayPositionPx !== null) {
-          <div
-            class="current-period-label"
-            [style.left.px]="todayPositionPx"
-            [attr.title]="currentPeriodLabel"
-          >{{ currentPeriodLabel }}</div>
           <div
             class="today-line"
             [style.left.px]="todayPositionPx"
-            [style.top.px]="HEADER_HEIGHT"
+            [style.top.px]="HEADER_HEIGHT + LABEL_GAP"
             [style.height.px]="workCenters.length * ROW_HEIGHT"
             [attr.title]="currentPeriodLabel"
           ></div>
@@ -77,7 +81,7 @@
             (mouseleave)="setHoverRow(null)"
             (click)="onTimelineClick(wc.docId, $event)"
             [style.height.px]="ROW_HEIGHT"
-            [style.top.px]="HEADER_HEIGHT + $index * ROW_HEIGHT"
+            [style.top.px]="HEADER_HEIGHT + LABEL_GAP + $index * ROW_HEIGHT"
           >
             @if (hoveredRowId === wc.docId) {
               <div class="click-to-add-hint">Click to add dates</div>
